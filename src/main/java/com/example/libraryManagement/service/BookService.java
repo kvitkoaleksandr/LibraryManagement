@@ -52,4 +52,10 @@ public class BookService {
     public boolean deleteBook(Long id) {
         return bookRepository.deleteById(id);
     }
+
+    public List<BookDto> searchBooks(String query) {
+        return bookRepository.findByTitleOrAuthorOrGenre(query).stream()
+                .map(bookMapper::toDto)
+                .toList();
+    }
 }

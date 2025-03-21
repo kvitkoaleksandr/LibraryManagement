@@ -40,4 +40,11 @@ public class BookRepository {
         }
         return false;
     }
+
+    public List<Book> findByTitleOrAuthorOrGenre(String query) {
+        return entityManager.createQuery(
+                        "SELECT b FROM Book b WHERE LOWER(b.title) LIKE :query OR LOWER(b.author) LIKE :query OR LOWER(b.genre) LIKE :query", Book.class)
+                .setParameter("query", "%" + query.toLowerCase() + "%")
+                .getResultList();
+    }
 }

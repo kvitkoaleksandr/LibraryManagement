@@ -26,6 +26,7 @@ public class UserService {
     @Transactional
     public AuthResponseDto registerUser(AuthRequestDto request) {
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
+            log.warn("Логин {} уже занят.", request.getUsername());
             return new AuthResponseDto("Ошибка: Логин уже занят!");
         }
 
@@ -34,20 +35,31 @@ public class UserService {
         userRepository.save(user);
 
         String token = jwtUtil.generateToken(user.getUsername());
+        log.info("Пользователь успешно зарегистрирован: {}", request.getUsername());
         return new AuthResponseDto(token);
     }
 
     public AuthResponseDto authenticateUser(AuthRequestDto request) {
         return userRepository.findByUsername(request.getUsername())
                 .filter(user -> passwordEncoder.matches(request.getPassword(), user.getPassword()))
-                .map(user -> new AuthResponseDto(jwtUtil.generateToken(user.getUsername())))
-                .orElse(new AuthResponseDto("Ошибка: Логин или пароль неверны!"));
+                .map(user -> {
+                    String token = jwtUtil.generateToken(user.getUsername());
+                    log.info("Пользователь успешно вошел: {}", request.getUsername());
+                    return new AuthResponseDto(token);
+                })
+                .orElseGet(() -> {
+                    log.warn("Неудачная попытка входа: {}", request.getUsername());
+                    return new AuthResponseDto("Ошибка: Логин или пароль неверны!");
+                });
     }
 
     public UserDto getCurrentUser(String token) {
         String username = jwtUtil.extractUsername(token);
         return userRepository.findByUsername(username)
                 .map(userMapper::toDto)
-                .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
+                .orElseThrow(() -> {
+                    log.warn("Пользователь не найден: {}", username);
+                    return new RuntimeException("Пользователь не найден");
+                });
     }
 }

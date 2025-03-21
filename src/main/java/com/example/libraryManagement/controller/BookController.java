@@ -55,4 +55,10 @@ public class BookController {
                 ? ResponseEntity.noContent().build()
                 : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
+
+    @Operation(summary = "Поиск книг по автору, названию или жанру")
+    @GetMapping("/search")
+    public List<BookDto> searchBooks(@RequestParam String query) {
+        return bookService.searchBooks(query);
+    }
 }
