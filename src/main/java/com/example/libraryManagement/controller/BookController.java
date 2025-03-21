@@ -51,9 +51,8 @@ public class BookController {
     @Operation(summary = "Удаление книги по ID")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
-        return bookService.deleteBook(id)
-                ? ResponseEntity.noContent().build()
-                : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        bookService.deleteBook(id);
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "Поиск книг по автору, названию или жанру")

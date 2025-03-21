@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -19,7 +21,5 @@ public class Book {
     private String author;
     private String genre;
     private String description;
-
-    // Поле для хранения даты добавления книги в библиотеку
-    private String publishDate;
+    private LocalDate publishDate;
 }

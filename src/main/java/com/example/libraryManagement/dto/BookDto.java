@@ -1,8 +1,12 @@
 package com.example.libraryManagement.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.time.LocalDate;
 
 @Data
 public class BookDto {
@@ -20,6 +24,7 @@ public class BookDto {
 
     private String description;
 
-    @NotBlank(message = "Дата публикации не может быть пустой")
-    private String publishDate;
+    @NotNull(message = "Дата публикации не может быть пустой")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private LocalDate publishDate;
 }
