@@ -7,11 +7,14 @@ import com.example.libraryManagement.entity.User;
 import com.example.libraryManagement.mapper.UserMapper;
 import com.example.libraryManagement.repository.UserRepository;
 import com.example.libraryManagement.security.JwtUtil;
+import jakarta.persistence.PersistenceException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -27,16 +30,21 @@ public class UserService {
     public AuthResponseDto registerUser(AuthRequestDto request) {
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
             log.warn("Логин {} уже занят.", request.getUsername());
-            return new AuthResponseDto("Ошибка: Логин уже занят!");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Логин уже занят!");
         }
 
         User user = userMapper.toEntity(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        userRepository.save(user);
 
-        String token = jwtUtil.generateToken(user.getUsername());
-        log.info("Пользователь успешно зарегистрирован: {}", request.getUsername());
-        return new AuthResponseDto(token);
+        try {
+            userRepository.save(user);
+            log.info("Пользователь успешно зарегистрирован: {}", request.getUsername());
+            String token = jwtUtil.generateToken(user.getUsername());
+            return new AuthResponseDto(token);
+        } catch (PersistenceException e) {
+            log.error("Ошибка сохранения пользователя с логином {}: {}", request.getUsername(), e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Ошибка при регистрации пользователя.");
+        }
     }
 
     public AuthResponseDto authenticateUser(AuthRequestDto request) {

@@ -2,20 +2,31 @@ package com.example.libraryManagement.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+
 import java.security.Key;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Component
 @Slf4j
 public class JwtUtil {
 
-    private static final String SECRET_KEY = "your_secret_key_your_secret_key_your_"; // 256 бит
+    @Value("${jwt.secret}")
+    private String secret;
+
+    private Key key;
+
     private static final long EXPIRATION_TIME = 86400000; // 1 день
 
-    private final Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
+    @PostConstruct
+    public void init() {
+        key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+    }
 
     public String generateToken(String username) {
         return Jwts.builder()
@@ -55,7 +66,6 @@ public class JwtUtil {
                 .before(new Date());
     }
 
-    // ✅ Финальная правильная версия метода
     public boolean isTokenValid(String token) {
         try {
             String username = extractUsername(token);
