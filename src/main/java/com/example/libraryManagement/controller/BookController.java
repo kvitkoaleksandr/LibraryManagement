@@ -1,17 +1,15 @@
 package com.example.libraryManagement.controller;
 
-
 import com.example.libraryManagement.dto.BookDto;
-import com.example.libraryManagement.entity.Book;
-
-import com.example.libraryManagement.service.impl.BookService;
+import com.example.libraryManagement.service.BookService;
+import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/books")
@@ -20,37 +18,41 @@ public class BookController {
 
     private final BookService bookService;
 
-    // Эндпоинт для получения списка всех книг
+    @Operation(summary = "Получение всех книг")
     @GetMapping
-    public List<Book> getAllBooks() {
+    public List<BookDto> getAllBooks() {
         return bookService.getAllBooks();
     }
 
-    // Эндпоинт для получения книги по id
+    @Operation(summary = "Получение книги по ID")
     @GetMapping("/{id}")
-    public ResponseEntity<Book> getBookById(@PathVariable Long id) {
-        Optional<Book> book = bookService.getBookById(id);
-        return book.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    public ResponseEntity<BookDto> getBookById(@PathVariable Long id) {
+        BookDto bookDto = bookService.getBookById(id);
+        return bookDto != null ? ResponseEntity.ok(bookDto)
+                : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
-    // Эндпоинт для создания новой книги
+    @Operation(summary = "Создание новой книги")
     @PostMapping
-    public ResponseEntity<Book> createBook(@RequestBody BookDto bookDto) {
-        Book book = bookService.createBook(bookDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(book);
+    public ResponseEntity<BookDto> createBook(@Valid @RequestBody BookDto bookDto) {
+        BookDto createdBook = bookService.createBook(bookDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdBook);
     }
 
-    // Эндпоинт для обновления книги
+    @Operation(summary = "Обновление книги по ID")
     @PutMapping("/{id}")
-    public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody BookDto bookDto) {
-        Book updatedBook = bookService.updateBook(id, bookDto);
-        return ResponseEntity.ok(updatedBook);
+    public ResponseEntity<BookDto> updateBook(@PathVariable Long id,
+                                              @Valid @RequestBody BookDto bookDto) {
+        BookDto updatedBook = bookService.updateBook(id, bookDto);
+        return updatedBook != null ? ResponseEntity.ok(updatedBook)
+                : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
-    // Эндпоинт для удаления книги
+    @Operation(summary = "Удаление книги по ID")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
-        bookService.deleteBook(id);
-        return ResponseEntity.noContent().build();
+        return bookService.deleteBook(id)
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 }
