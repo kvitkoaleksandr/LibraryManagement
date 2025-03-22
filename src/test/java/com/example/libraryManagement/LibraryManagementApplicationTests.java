@@ -7,7 +7,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 class LibraryManagementApplicationTests {
 
 	@Test
-	void contextLoads() {
+	void contextLoadsTest() {
 	}
-
 }

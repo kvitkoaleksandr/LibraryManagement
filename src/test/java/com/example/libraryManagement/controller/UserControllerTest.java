@@ -29,7 +29,7 @@ class UserControllerTest {
 
     @Test
     @DisplayName("Получение текущего пользователя по токену: успех")
-    void getCurrentUser_Success() {
+    void getCurrentUserSuccessTest() {
         UserDto expectedUser = new UserDto(USERNAME);
         when(userService.getCurrentUser(anyString())).thenReturn(expectedUser);
 
@@ -42,7 +42,7 @@ class UserControllerTest {
 
     @Test
     @DisplayName("Получение текущего пользователя: пользователь не найден")
-    void getCurrentUser_NotFound() {
+    void getCurrentUserNotFoundTest() {
         when(userService.getCurrentUser(anyString())).thenThrow(new RuntimeException("Пользователь не найден"));
 
         RuntimeException exception = assertThrows(RuntimeException.class, () ->

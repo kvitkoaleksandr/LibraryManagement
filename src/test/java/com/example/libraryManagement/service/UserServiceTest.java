@@ -19,7 +19,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -66,7 +67,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("Успешная регистрация пользователя")
-    void registerUser_Success() {
+    void registerUserSuccessTest() {
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
         when(userMapper.toEntity(any(AuthRequestDto.class))).thenReturn(user);
         when(passwordEncoder.encode(anyString())).thenReturn(ENCODED_PASSWORD);
@@ -80,7 +81,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("Ошибка регистрации: пользователь уже существует")
-    void registerUser_UserAlreadyExists() {
+    void registerUserUserAlreadyExistsTest() {
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
 
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, () ->
@@ -92,7 +93,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("Успешная аутентификация пользователя")
-    void authenticateUser_Success() {
+    void authenticateUserSuccessTest() {
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
         when(jwtUtil.generateToken(anyString())).thenReturn(TOKEN);
@@ -104,7 +105,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("Ошибка аутентификации: неверный логин или пароль")
-    void authenticateUser_InvalidCredentials() {
+    void authenticateUserInvalidCredentialsTest() {
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
 
@@ -115,7 +116,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("Получение текущего пользователя по токену: успех")
-    void getCurrentUser_Success() {
+    void getCurrentUserSuccessTest() {
         when(jwtUtil.extractUsername(anyString())).thenReturn(USERNAME);
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
         when(userMapper.toDto(any(User.class))).thenReturn(userDto);
@@ -127,7 +128,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("Ошибка получения текущего пользователя: пользователь не найден")
-    void getCurrentUser_UserNotFound() {
+    void getCurrentUserUserNotFoundTest() {
         when(jwtUtil.extractUsername(anyString())).thenReturn(USERNAME);
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
 
