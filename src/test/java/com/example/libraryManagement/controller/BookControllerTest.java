@@ -15,7 +15,8 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class BookControllerTest {
@@ -31,7 +32,7 @@ class BookControllerTest {
 
     @Test
     @DisplayName("Получение списка всех книг")
-    void getAllBooks_Success() {
+    void getAllBooksSuccessTest() {
         BookDto bookDto = new BookDto();
         bookDto.setTitle(BOOK_TITLE);
         when(bookService.getAllBooks()).thenReturn(List.of(bookDto));
@@ -45,7 +46,7 @@ class BookControllerTest {
 
     @Test
     @DisplayName("Получение книги по ID: успех")
-    void getBookById_Success() {
+    void getBookByIdSuccessTest() {
         BookDto bookDto = new BookDto();
         bookDto.setTitle(BOOK_TITLE);
         when(bookService.getBookById(anyLong())).thenReturn(bookDto);
@@ -59,7 +60,7 @@ class BookControllerTest {
 
     @Test
     @DisplayName("Получение книги по ID: книга не найдена")
-    void getBookById_NotFound() {
+    void getBookByIdNotFoundTest() {
         when(bookService.getBookById(anyLong())).thenReturn(null);
 
         ResponseEntity<BookDto> response = bookController.getBookById(BOOK_ID);
@@ -70,7 +71,7 @@ class BookControllerTest {
 
     @Test
     @DisplayName("Создание новой книги: успех")
-    void createBook_Success() {
+    void createBookSuccessTest() {
         BookDto requestDto = new BookDto();
         requestDto.setTitle(BOOK_TITLE);
 
@@ -85,7 +86,7 @@ class BookControllerTest {
 
     @Test
     @DisplayName("Обновление книги: успех")
-    void updateBook_Success() {
+    void updateBookSuccessTest() {
         BookDto requestDto = new BookDto();
         requestDto.setTitle(BOOK_TITLE);
 
@@ -100,7 +101,7 @@ class BookControllerTest {
 
     @Test
     @DisplayName("Обновление книги: книга не найдена")
-    void updateBook_NotFound() {
+    void updateBookNotFoundTest() {
         BookDto requestDto = new BookDto();
 
         when(bookService.updateBook(anyLong(), any(BookDto.class))).thenReturn(null);
@@ -112,7 +113,7 @@ class BookControllerTest {
 
     @Test
     @DisplayName("Удаление книги: успех")
-    void deleteBook_Success() {
+    void deleteBookSuccessTest() {
         doNothing().when(bookService).deleteBook(anyLong());
 
         ResponseEntity<Void> response = bookController.deleteBook(BOOK_ID);
@@ -122,7 +123,7 @@ class BookControllerTest {
 
     @Test
     @DisplayName("Поиск книг: успех")
-    void searchBooks_Success() {
+    void searchBooksSuccessTest() {
         BookDto bookDto = new BookDto();
         bookDto.setTitle(BOOK_TITLE);
         when(bookService.searchBooks(anyString())).thenReturn(List.of(bookDto));

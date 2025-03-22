@@ -18,7 +18,8 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class BookServiceTest {
@@ -50,7 +51,7 @@ class BookServiceTest {
 
     @Test
     @DisplayName("Успешное создание книги")
-    void createBook_Success() {
+    void createBookSuccessTest() {
         when(bookMapper.toEntity(any(BookDto.class))).thenReturn(book);
         when(bookRepository.save(any(Book.class))).thenReturn(book);
         when(bookMapper.toDto(any(Book.class))).thenReturn(bookDto);
@@ -63,7 +64,7 @@ class BookServiceTest {
 
     @Test
     @DisplayName("Получение списка всех книг")
-    void getAllBooks_Success() {
+    void getAllBooksSuccessTest() {
         when(bookRepository.findAll()).thenReturn(List.of(book));
         when(bookMapper.toDto(any(Book.class))).thenReturn(bookDto);
 
@@ -75,7 +76,7 @@ class BookServiceTest {
 
     @Test
     @DisplayName("Успешное получение книги по ID")
-    void getBookById_Success() {
+    void getBookByIdSuccessTest() {
         when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
         when(bookMapper.toDto(any(Book.class))).thenReturn(bookDto);
 
@@ -86,7 +87,7 @@ class BookServiceTest {
 
     @Test
     @DisplayName("Ошибка при получении книги по ID (книга не найдена)")
-    void getBookById_NotFound() {
+    void getBookByIdNotFoundTest() {
         when(bookRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         assertThrows(BookNotFoundException.class, () -> bookService.getBookById(BOOK_ID));
@@ -94,7 +95,7 @@ class BookServiceTest {
 
     @Test
     @DisplayName("Успешное обновление книги")
-    void updateBook_Success() {
+    void updateBookSuccessTest() {
         when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
         when(bookMapper.toEntity(any(BookDto.class))).thenReturn(book);
         when(bookRepository.save(any(Book.class))).thenReturn(book);
@@ -108,7 +109,7 @@ class BookServiceTest {
 
     @Test
     @DisplayName("Ошибка при обновлении книги (книга не найдена)")
-    void updateBook_NotFound() {
+    void updateBookNotFoundTest() {
         when(bookRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         assertThrows(BookNotFoundException.class, () -> bookService.updateBook(BOOK_ID, bookDto));
@@ -116,7 +117,7 @@ class BookServiceTest {
 
     @Test
     @DisplayName("Успешное удаление книги")
-    void deleteBook_Success() {
+    void deleteBookSuccessTest() {
         when(bookRepository.deleteById(anyLong())).thenReturn(true);
 
         assertDoesNotThrow(() -> bookService.deleteBook(BOOK_ID));
@@ -125,7 +126,7 @@ class BookServiceTest {
 
     @Test
     @DisplayName("Ошибка при удалении книги (книга не найдена)")
-    void deleteBook_NotFound() {
+    void deleteBookNotFoundTest() {
         when(bookRepository.deleteById(anyLong())).thenReturn(false);
 
         assertThrows(BookNotFoundException.class, () -> bookService.deleteBook(BOOK_ID));
@@ -133,7 +134,7 @@ class BookServiceTest {
 
     @Test
     @DisplayName("Поиск книг по запросу")
-    void searchBooks_Success() {
+    void searchBooksSuccessTest() {
         when(bookRepository.findByTitleOrAuthorOrGenre(anyString())).thenReturn(List.of(book));
         when(bookMapper.toDto(any(Book.class))).thenReturn(bookDto);
 
