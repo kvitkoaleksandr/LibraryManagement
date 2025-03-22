@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: libraryManagement
+
+  datasource:
+    url: jdbc:postgresql://localhost:5430/library
+    username: admin
+    password: admin
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+jwt:
+  secret: your_secret_key_here_very_secure_and_long
