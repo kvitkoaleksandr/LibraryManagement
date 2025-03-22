@@ -35,9 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
-# Spring Boot properties (не отправляем в Git)
-application.properties
-application.yml
 
 # Gradle Wrapper (можно восстановить)
 gradle/wrapper/gradle-wrapper.jar
